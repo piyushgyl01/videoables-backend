@@ -1,4 +1,14 @@
-import httpStatus from "http-status";
+const HTTP_STATUS = {
+  OK: 200,
+  CREATED: 201,
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  NOT_FOUND: 404,
+  FOUND: 409,
+  INTERNAL_SERVER_ERROR: 500
+};
+
+
 import bcrypt, { hash } from "bcrypt";
 import crypto from "crypto";
 
@@ -17,7 +27,7 @@ const login = async (req, res) => {
 
     if (!user) {
       return res
-        .status(httpStatus.NOT_FOUND)
+        .status(HTTP_STATUS.NOT_FOUND)
         .json({ message: "User not found" });
     }
 
@@ -28,15 +38,15 @@ const login = async (req, res) => {
 
       user.token = token;
       await user.save();
-      return res.status(httpStatus.OK).json({ token: token });
+      return res.status(HTTP_STATUS.OK).json({ token: token });
     } else {
       return res
-        .status(httpStatus.UNAUTHORIZED)
+        .status(HTTP_STATUS.UNAUTHORIZED)
         .json({ message: "Invalid username or password" });
     }
   } catch (error) {
     res
-      .status(httpStatus.INTERNAL_SERVER_ERROR)
+      .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
       .json({ message: `Something went wrong ${error}` });
   }
 };
@@ -49,7 +59,7 @@ const register = async (req, res) => {
 
     if (existingUser) {
       return res
-        .status(httpStatus.FOUND)
+        .status(HTTP_STATUS.FOUND)
         .json({ message: "User already exists" });
     }
 
@@ -63,10 +73,10 @@ const register = async (req, res) => {
 
     await newUser.save();
 
-    res.status(httpStatus.CREATED).json({ message: "User Registered" });
+    res.status(HTTP_STATUS.CREATED).json({ message: "User Registered" });
   } catch (error) {
     res
-      .status(httpStatus.INTERNAL_SERVER_ERROR)
+      .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
       .json({ message: `Something went wrong ${error}` });
   }
 };
@@ -78,10 +88,10 @@ const getUserHistory = async (req, res) => {
     const user = await User.findOne({ token: token });
     const meetings = await Meeting.find({ user_id: user.username });
 
-    res.status(httpStatus.OK).json(meetings);
+    res.status(HTTP_STATUS.OK).json(meetings);
   } catch (error) {
     res
-      .status(httpStatus.INTERNAL_SERVER_ERROR)
+      .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
       .json({ message: `Something went wrong ${error}` });
   }
 };
@@ -99,10 +109,10 @@ const addToHistory = async (req, res) => {
 
     await newMeeting.save();
 
-    res.status(httpStatus.CREATED).json({ message: "Added code to history" });
+    res.status(HTTP_STATUS.CREATED).json({ message: "Added code to history" });
   } catch (error) {
     res
-      .status(httpStatus.INTERNAL_SERVER_ERROR)
+      .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
       .json({ message: `Something went wrong ${error}` });
   }
 };
