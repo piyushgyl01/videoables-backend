@@ -7,11 +7,14 @@ let timeOnline = {};
 export const connectToSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "*",
+      origin: [
+        "http://localhost:3001",     // Development frontend
+        "https://videoables.vercel.app", // Production frontend
+        "http://localhost:5173",     // Vite default dev server
+      ],
       methods: ["GET", "POST"],
-      allowedHeaders: ["*"],
-      credentials: true,
-    },
+      credentials: true
+    }
   });
 
   io.on("connection", (socket) => {
